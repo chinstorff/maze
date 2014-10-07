@@ -1,8 +1,8 @@
 Game = {};
 
 A = {
-    w: 301,
-    h: 301,
+    w: 601,
+    h: 601,
 };
 
 Game.Boot = function (game) { };

@@ -1,6 +1,6 @@
 Game.Play = function (game) { };
 
-A.num_cells  = 10; // number of cells per row and column
+A.num_cells  = 20; // number of cells per row and column
 A.cell_width = (A.h - 1) / A.num_cells;
 
 A.list = {
@@ -19,6 +19,8 @@ A.color = {
 A.keys = {};
 
 A.grid_painted = false;
+
+A.step_count = 0;
 
 Game.Play.prototype = {
     create: function () {
@@ -58,9 +60,12 @@ Game.Play.prototype = {
 		this.push_dead(this.pop_alive());
 	    }
 	}
-	
-	this.lists_to_grid();
-	this.paint();
+
+//	if (A.step_count % 3 === 0) {
+	    this.lists_to_grid();
+	    this.paint();
+//	}
+	A.step_count++;
     },
 
     lists_to_grid: function () {
