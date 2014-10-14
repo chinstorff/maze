@@ -1,16 +1,5 @@
 Game.Play = function (game) { };
 
-A.num_cells  = 20; // number of cells per row and column
-A.cell_width = (A.h - 1) / A.num_cells;
-
-A.list = {
-    alive: [],
-    dead:  [],
-
-    new_alive: [],
-    new_dead:  [],
-};
-
 A.color = {
     alive: 0xFFCCCC,
     dead:  0xF5F5F5,
@@ -18,23 +7,38 @@ A.color = {
 
 A.keys = {};
 
-A.grid_painted = false;
-
 A.step_count = 0;
 
 Game.Play.prototype = {
     create: function () {
 	game.stage.backgroundColor = '#ccc';
+
+	A.num_cells  = A.num_cells || 10;
+	A.cell_width = (A.h - 1) / A.num_cells;
+
+	A.grid_painted = false;
+
+	A.list = {
+	    alive: [],
+	    dead:  [],
+	    
+	    new_alive: [],
+	    new_dead:  [],
+	};
 	
 	A.grid = new Grid(A.num_cells, A.num_cells);
-
+	
 	this.push_alive([Math.floor(Math.random() * A.num_cells), Math.floor(Math.random() * A.num_cells)]);
 	
 	A.keys.space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	A.keys.space.onDown.add(function () {
-	    this.step();
+	    game.state.start('Menu');
 	}, this);
-	
+
+	if (A.graphics) {
+	    A.graphics.destroy();
+	}
+
 	this.lists_to_grid();
 	this.paint();
     },
