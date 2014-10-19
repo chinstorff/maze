@@ -3,11 +3,14 @@ Game.Play = function (game) { };
 A.color = {
     alive: 0xFFCCCC,
     dead:  0xF5F5F5,
+    head:  0x7A9999,
 };
 
 A.keys = {};
 
 A.step_count = 0;
+
+A.square = {};
 
 Game.Play.prototype = {
     create: function () {
@@ -27,8 +30,18 @@ Game.Play.prototype = {
 	};
 	
 	A.grid = new Grid(A.num_cells, A.num_cells);
+
+	A.square.start = game.add.sprite(A.w + 1, A.h + 1, 'marker');
+	A.square.head  = game.add.sprite(A.w + 1, A.h + 1, 'marker');
+	A.square.start.scale.setTo(A.cell_width * 3 / 5);
+	A.square.head.scale.setTo(A.cell_width * 3 / 5);
 	
-	this.push_alive([Math.floor(Math.random() * A.num_cells), Math.floor(Math.random() * A.num_cells)]);
+	A.start = [Math.floor(Math.random() * A.num_cells), Math.floor(Math.random() * A.num_cells)]
+	A.square.start.x = Math.floor(A.cell_width * (A.start[0] + 1 / 5));
+	A.square.start.y = Math.floor(A.cell_width * (A.start[1] + 1 / 5));
+
+
+	this.push_alive(A.start);
 	
 	A.keys.space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	A.keys.space.onDown.add(function () {
@@ -84,6 +97,9 @@ Game.Play.prototype = {
     push_alive: function (val) {
 	A.list.alive.push(val);
 	A.list.new_alive.push(val);
+
+	A.square.head.x = Math.floor(A.cell_width * (val[0] + 1 / 5));
+	A.square.head.y = Math.floor(A.cell_width * (val[1] + 1 / 5));
     },
 
     push_dead: function (val) {
@@ -112,6 +128,9 @@ Game.Play.prototype = {
 
 	this.paint_list('new_alive');
 	this.paint_list('new_dead');
+
+	A.square.start.bringToTop();
+	A.square.head.bringToTop();
     },
 
     paint_grid: function () {
@@ -170,11 +189,12 @@ Game.Play.prototype = {
 	A.list[name] = [];
     },
 
-    paint_cell_alive: function (x, y) {
+    paint_cell_alive: function (x, y, color) {
 	var offset = Math.floor(A.cell_width / 5 * 1);
-
+	color = color || A.color.alive;
+	
 	this.paint_cell_dead(x, y);
-	this.paint_cell(x, y, A.color.alive, offset);
+	this.paint_cell(x, y, color, offset);
     },
     
     paint_cell_dead: function (x, y) {

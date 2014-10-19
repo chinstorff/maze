@@ -6,8 +6,8 @@ Game.Load.prototype = {
 
 
 	// load everything
-
-
+	game.load.image('title', 'assets/img/title.png');
+	game.load.image('marker', 'assets/img/marker.png');
     },
 
     create: function () {
