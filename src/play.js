@@ -37,9 +37,8 @@ Game.Play.prototype = {
 	A.square.head.scale.setTo(A.cell_width * 3 / 5);
 	
 	A.start = [Math.floor(Math.random() * A.num_cells), Math.floor(Math.random() * A.num_cells)]
-	A.square.start.x = Math.floor(A.cell_width * (A.start[0] + 1 / 5));
-	A.square.start.y = Math.floor(A.cell_width * (A.start[1] + 1 / 5));
-
+//	A.square.start.x = Math.floor(A.cell_width * (A.start[0] + 1 / 5));
+//	A.square.start.y = Math.floor(A.cell_width * (A.start[1] + 1 / 5));
 
 	this.push_alive(A.start);
 	
@@ -78,10 +77,12 @@ Game.Play.prototype = {
 	    }
 	}
 
-//	if (A.step_count % 3 === 0) {
-	    this.lists_to_grid();
-	    this.paint();
-//	}
+	this.lists_to_grid();
+	this.paint();
+
+	A.square.head.x = Math.floor(A.cell_width * (latest[0] + 1 / 5));
+	A.square.head.y = Math.floor(A.cell_width * (latest[1] + 1 / 5));
+	
 	A.step_count++;
     },
 
@@ -97,9 +98,6 @@ Game.Play.prototype = {
     push_alive: function (val) {
 	A.list.alive.push(val);
 	A.list.new_alive.push(val);
-
-	A.square.head.x = Math.floor(A.cell_width * (val[0] + 1 / 5));
-	A.square.head.y = Math.floor(A.cell_width * (val[1] + 1 / 5));
     },
 
     push_dead: function (val) {
