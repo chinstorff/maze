@@ -8,8 +8,6 @@ A.color = {
 
 A.keys = {};
 
-A.step_count = 0;
-
 A.square = {};
 
 Game.Play.prototype = {
@@ -36,16 +34,8 @@ Game.Play.prototype = {
 	
 	A.grid = new Grid(A.num_cells, A.num_cells);
 
-	A.square.start = game.add.sprite(A.w + 1, A.h + 1, 'marker');
-	A.square.end  = game.add.sprite(A.w + 1, A.h + 1, 'marker');
-	A.square.start.scale.setTo(Math.ceil(A.cell_width * 3 / 5));
-	A.square.end.scale.setTo(Math.ceil(A.cell_width * 3 / 5));
-	
 	A.start = [Math.floor(Math.random() * A.num_cells), Math.floor(Math.random() * A.num_cells)]
 
-	A.square.start.x = Math.floor(A.cell_width * (A.start[0] + 1 / 5));
-	A.square.start.y = Math.floor(A.cell_width * (A.start[1] + 1 / 5));
-	
 	this.push_alive(A.start);
 	
 	A.keys.space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -53,17 +43,24 @@ Game.Play.prototype = {
 	    game.state.start('Menu');
 	}, this);
 
+	A.step_count = 0;
+	
 	if (A.graphics) {
 	    A.graphics.destroy();
 	}
 
 	this.lists_to_grid();
 	this.paint();
+	this.paint_cell_alive(A.start[0], A.start[1], A.color.head);
     },
 
     update: function () {
 	if (A.list.alive.length) {
 	    this.step();
+	}
+
+	if (A.step_count === 2 * A.num_cells * A.num_cells) {
+	    this.paint_cell_alive(A.farthest.location[0], A.farthest.location[1], A.color.head);
 	}
     },
 
@@ -71,7 +68,7 @@ Game.Play.prototype = {
 	var latest = A.list.alive[A.list.alive.length - 1];
 	var neighbor;
 
-	if (latest) {
+	if (latest && A.step_count < 2 * A.num_cells * A.num_cells - 2) {
 	    neighbor = A.grid.randomEmptyNeighborOf(latest[0], latest[1]);
 
 	    if (neighbor) {
@@ -83,13 +80,12 @@ Game.Play.prototype = {
 
 	    if (A.list.alive.length > A.farthest.distance) {
 		A.farthest.location = A.list.alive[A.list.alive.length - 1];
-		A.farthest.distance = A.list.alive.length;
-
-		A.square.end.x = Math.floor(A.cell_width * (A.farthest.location[0] + 1 / 5));
-		A.square.end.y = Math.floor(A.cell_width * (A.farthest.location[1] + 1 / 5));		
+		A.farthest.distance = A.list.alive.length;		
 	    }
 	}
 
+
+	
 	this.lists_to_grid();
 	this.paint();
 	
@@ -136,9 +132,6 @@ Game.Play.prototype = {
 
 	this.paint_list('new_alive');
 	this.paint_list('new_dead');
-
-	A.square.start.bringToTop();
-	A.square.end.bringToTop();
     },
 
     paint_grid: function () {
