@@ -28,18 +28,24 @@ Game.Play.prototype = {
 	    new_alive: [],
 	    new_dead:  [],
 	};
+
+	A.farthest = {
+	    distance: 0,
+	    location: [-1, -1],
+	};
 	
 	A.grid = new Grid(A.num_cells, A.num_cells);
 
 	A.square.start = game.add.sprite(A.w + 1, A.h + 1, 'marker');
-	A.square.head  = game.add.sprite(A.w + 1, A.h + 1, 'marker');
-	A.square.start.scale.setTo(A.cell_width * 3 / 5);
-	A.square.head.scale.setTo(A.cell_width * 3 / 5);
+	A.square.end  = game.add.sprite(A.w + 1, A.h + 1, 'marker');
+	A.square.start.scale.setTo(Math.ceil(A.cell_width * 3 / 5));
+	A.square.end.scale.setTo(Math.ceil(A.cell_width * 3 / 5));
 	
 	A.start = [Math.floor(Math.random() * A.num_cells), Math.floor(Math.random() * A.num_cells)]
-//	A.square.start.x = Math.floor(A.cell_width * (A.start[0] + 1 / 5));
-//	A.square.start.y = Math.floor(A.cell_width * (A.start[1] + 1 / 5));
 
+	A.square.start.x = Math.floor(A.cell_width * (A.start[0] + 1 / 5));
+	A.square.start.y = Math.floor(A.cell_width * (A.start[1] + 1 / 5));
+	
 	this.push_alive(A.start);
 	
 	A.keys.space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -62,7 +68,6 @@ Game.Play.prototype = {
     },
 
     step: function () {
-	console.log('step');
 	var latest = A.list.alive[A.list.alive.length - 1];
 	var neighbor;
 
@@ -75,13 +80,18 @@ Game.Play.prototype = {
 	    else if (A.list.alive.length) {
 		this.push_dead(this.pop_alive());
 	    }
+
+	    if (A.list.alive.length > A.farthest.distance) {
+		A.farthest.location = A.list.alive[A.list.alive.length - 1];
+		A.farthest.distance = A.list.alive.length;
+
+		A.square.end.x = Math.floor(A.cell_width * (A.farthest.location[0] + 1 / 5));
+		A.square.end.y = Math.floor(A.cell_width * (A.farthest.location[1] + 1 / 5));		
+	    }
 	}
 
 	this.lists_to_grid();
 	this.paint();
-
-	A.square.head.x = Math.floor(A.cell_width * (latest[0] + 1 / 5));
-	A.square.head.y = Math.floor(A.cell_width * (latest[1] + 1 / 5));
 	
 	A.step_count++;
     },
@@ -128,7 +138,7 @@ Game.Play.prototype = {
 	this.paint_list('new_dead');
 
 	A.square.start.bringToTop();
-	A.square.head.bringToTop();
+	A.square.end.bringToTop();
     },
 
     paint_grid: function () {
