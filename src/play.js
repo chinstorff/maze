@@ -68,6 +68,8 @@ Game.Play.prototype = {
 	var latest = A.list.alive[A.list.alive.length - 1];
 	var neighbor;
 
+	A.farthest.last_location = A.farthest.location;
+	
 	if (latest && A.step_count < 2 * A.num_cells * A.num_cells - 2) {
 	    neighbor = A.grid.randomEmptyNeighborOf(latest[0], latest[1]);
 
@@ -84,7 +86,10 @@ Game.Play.prototype = {
 	    }
 	}
 
-
+	if (A.farthest.last_location !== A.farthest.location && A.farthest.last_location[0] >= 0) {
+	    this['paint_cell_' + A.grid.contentsOf(A.farthest.last_location[0], A.farthest.last_location[1])](A.farthest.last_location[0], A.farthest.last_location[1]);
+	}
+	this.paint_cell_alive(A.farthest.location[0], A.farthest.location[1], A.color.head);
 	
 	this.lists_to_grid();
 	this.paint();
